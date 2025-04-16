@@ -1,4 +1,4 @@
-import * as Font from 'expo-font';
+// import * as Font from 'expo-font';
 import {
     StyleSheet,
     Text,
@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     TextInput,
     ImageBackground,
-    Touchable,
+    Image,
 } from 'react-native';
 import { act, useState } from 'react';
 
@@ -38,38 +38,50 @@ const Screen1 = ({ navigation }) => {
             />
             {/* Overlay */}
             <View style={styles.box}>
+
+
                 <Text style={styles.title}>App Title</Text>
                 {/* Input Box Container  */}
                 <View style={styles.inputBox}>
-                    <TextInput
-                        placeholder={'Enter your name'}
-                        style={styles.textInput}
-                        value={name}
-                        onChangeText={setName}
-                    />
-                    {/* Color Select box */}
+                    <View style={styles.txtInputBox}>
+                        <Image style={styles.icnImg} source={require("../assets/icon.png")} />
+                        <TextInput
+                            placeholder={'Enter your name'}
+                            style={styles.textInput}
+                            value={name}
+                            onChangeText={setName}
+                        />
+                    </View>
+                    {/* Color Select Container */}
                     <View style={{ width: "88%", height: 80 }} >
                         <View style={styles.bgSelectText}>
                             <Text>Choose Background Color</Text>
                         </View>
+                        {/* Color Select Choices */}
                         <View style={styles.colorSelect}>
-                            <TouchableOpacity
-                                style={styles.color1}
-                                onPress={() => setBackground('#090C08')}
-                            />
-                            <TouchableOpacity
-                                style={styles.color2}
-                                onPress={() => { setBackground('#474056') }}
-                            />
-                            <TouchableOpacity style={styles.color3} onPress={() => { setBackground('#8A95A5') }} />
-                            <TouchableOpacity style={styles.color4} onPress={() => { setBackground('#B9C6AE') }} />
+                            <View style={background === '#090C08' && styles.colorSurround}>
+                                <TouchableOpacity
+                                    style={styles.color1}
+                                    onPress={() => setBackground('#090C08')}
+                                /></View>
+                            <View style={background === '#474056' && styles.colorSurround}>
+                                <TouchableOpacity
+                                    style={styles.color2}
+                                    onPress={() => { setBackground('#474056') }}
+                                /></View>
+                            <View style={background === '#8A95A5' && styles.colorSurround}>
+                                <TouchableOpacity style={styles.color3} onPress={() => { setBackground('#8A95A5') }} />
+                            </View>
+                            <View style={background === '#B9C6AE' && styles.colorSurround}>
+                                <TouchableOpacity style={styles.color4} onPress={() => { setBackground('#B9C6AE') }} />
+                            </View>
                         </View>
                     </View>
                     <TouchableOpacity
                         style={styles.chatButton}
                         onPress={() =>
                             navigation.navigate(
-                                'Screen2',
+                                'Chat',
                                 { name: name, background: background }
                             )
                         }>
@@ -94,12 +106,46 @@ const styles = StyleSheet.create({
         color: '#757083',
 
     },
-    title: {
+    colorSurround: {
+        display: 'flex',
+        height: 35,
+        width: 35,
+        margin: '5%',
+        padding: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        borderWidth: 1,
+        borderStyle: 'solid',
+        borderColor: '#757083', // Adjust the border color as needed
+        borderRadius: '50%', // Ensures the border is circular
+
+    },
+    icnImg: {
+        width: 30,
+        height: 30,
+        marginLeft: 15,
+        marginRight: 15,
+    },
+    title:
+    {
         fontSize: 45,
         color: 'white',
         marginTop: 64,
         fontWeight: '600',
         textAlign: 'center',
+    },
+    txtInputBox: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'start',
+        alignItems: 'center',
+        width: '88%',
+        height: 80,
+        borderWidth: 1,
+        marginTop: 15,
+        marginBottom: 15,
+        backgroundColor: '#FFFFFF',
     },
     chatText: {
         color: '#FFFFFF',
@@ -110,7 +156,7 @@ const styles = StyleSheet.create({
         width: '88%',
         height: 80,
         padding: 15,
-        borderWidth: 1,
+        borderWidth: 0,
         marginTop: 15,
         marginBottom: 15,
     },
@@ -136,10 +182,10 @@ const styles = StyleSheet.create({
         display: 'flex',
         width: '88%',
         height: 70,
-        // padding: '10',
         flexDirection: 'row',
-        justifyContent: 'start',
-        marginBottom: 50,
+        alignItems: 'center',
+        justifyContent: 'space-around',
+        // marginBottom: 50,
     },
     inputBox: {
         display: 'flex',
@@ -153,33 +199,48 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     color1: {
-        width: '15%',
-        height: '60%',
-        borderRadius: '50%',
+        width: 35,
+        height: 35,
+        marginLeft: 20,
         marginTop: 10,
-        backgroundColor: '#090C08',
+        marginBottom: 10,
         marginRight: 20,
+        borderRadius: '50%',
+
+        backgroundColor: '#090C08',
+
     },
     color2: {
-        width: '15%',
-        height: '60%',
+        width: 35,
+        height: 35,
+
+        marginLeft: 20,
         marginTop: 10,
+        marginBottom: 10,
+        marginRight: 20,
         borderRadius: '50%',
         backgroundColor: '#474056',
-        marginRight: 20,
     },
     color3: {
-        width: '15%',
-        height: '60%',
+        width: 35,
+        height: 35,
+
+        marginLeft: 20,
         marginTop: 10,
+        marginBottom: 10,
+        marginRight: 20,
         borderRadius: '50%',
         backgroundColor: '#8A95A5',
-        marginRight: 20,
+
     },
     color4: {
-        width: '15%',
-        height: '60%',
+        width: 35,
+        height: 35,
+
+        marginLeft: 20,
         marginTop: 10,
+        marginBottom: 10,
+        marginRight: 20,
         borderRadius: '50%',
         backgroundColor: '#B9C6AE',
     },
