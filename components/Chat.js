@@ -1,8 +1,14 @@
-import { StyleSheet, View, Text } from 'react-native';
-import { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { KeyboardAvoidingView, Platform } from 'react-native';
+import { GiftedChat } from 'react-native-gifted-chat';
 
 const Screen2 = ({ route, navigation }) => {
     const { background, name } = route.params;
+    const [messages, setMessages] = useState([]);
+    const onSend = (messages = []) => {
+        setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
+    };
 
     useEffect(() => {
         navigation.setOptions({
@@ -11,9 +17,31 @@ const Screen2 = ({ route, navigation }) => {
         })
 
     }, []);
+    useEffect(() => {
+        setMessages([
+            {
+                _id: 1,
+                text: `Hello ${name}, how can we help?`,
+                createdAt: new Date(),
+                user: {
+                    _id: 2,
+                    name: "React Native",
+                    avatar: "https://placeimg.com/140/140/any",
+                },
+            },
+        ]);
+    }, []);
     return (
         <View style={[styles.container, { backgroundColor: background }]}>
-            <Text>Welcome {name}!</Text>
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={[styles.container, { backgroundColor: background }]}>
+                <GiftedChat
+                    messages={messages}
+                    onSend={messages => onSend(messages)}
+                    user={{
+                        _id: 1
+                    }}
+                />
+            </KeyboardAvoidingView>
         </View>
     );
 }
@@ -21,8 +49,6 @@ const Screen2 = ({ route, navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     }
 });
 

@@ -49,6 +49,9 @@ const Screen1 = ({ navigation }) => {
                             placeholder={'Enter your name'}
                             style={styles.textInput}
                             value={name}
+                            accessible={true}
+                            accessibilityLabel="Name Input"
+                            accessibilityHint="Enter your name here"
                             onChangeText={setName}
                         />
                     </View>
@@ -58,7 +61,10 @@ const Screen1 = ({ navigation }) => {
                             <Text>Choose Background Color</Text>
                         </View>
                         {/* Color Select Choices */}
-                        <View style={styles.colorSelect}>
+                        <View style={styles.colorSelect}
+                            accessible={true}
+                            accessibilityLabel="Color Selection"
+                            accessibilityHint="Select a color for the background">
                             <View style={background === '#090C08' && styles.colorSurround}>
                                 <TouchableOpacity
                                     style={styles.color1}
@@ -84,7 +90,10 @@ const Screen1 = ({ navigation }) => {
                                 'Chat',
                                 { name: name, background: background }
                             )
-                        }>
+                        }
+                        accessibility={true}
+                        accessibilityLabel="Start Chat Button"
+                        accessibilityHint="Press to start chatting">
                         <Text style={styles.chatText}>Start Chatting</Text>
                     </TouchableOpacity>
                 </View>
