@@ -34,6 +34,9 @@
         "projectId": "f81769bf-c325-400c-8a3f-47aac286e3f7"
       }
     },
-    "owner": "dizzypete"
+    "owner": "dizzypete",
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
