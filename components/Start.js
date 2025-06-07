@@ -8,9 +8,40 @@ import {
     ImageBackground,
     Image,
 } from 'react-native';
-import { act, useState } from 'react';
+import { useState } from 'react';
+import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
+
+
 
 const Screen1 = ({ navigation }) => {
+
+
+    const auth = getAuth();
+    const signInUser = () => {
+        signInAnonymously(auth)
+            .then(() => {
+                console.log('Signed in anonymously');
+            })
+            .catch((error) => {
+                console.error('Error signing in anonymously:', error);
+            });
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const userID = user.uid; // Get the user ID from the authenticated user
+                console.log(userID);
+                navigation.navigate(
+                    'Chat',
+                    { name: name, background: background, userID: userID } // Pass the user ID to the next screen
+                )
+
+            }
+            else {
+
+            }
+        })
+
+    }
+
     const [name, setName] = useState('');
     // const [fontsLoaded, setFontsLoaded] = useState(false);
     const [background, setBackground] = useState('');
@@ -79,11 +110,10 @@ const Screen1 = ({ navigation }) => {
                     </View>
                     <TouchableOpacity
                         style={styles.chatButton}
-                        onPress={() =>
-                            navigation.navigate(
-                                'Chat',
-                                { name: name, background: background }
-                            )
+                        onPress={() => {
+
+                            signInUser();
+                        }
                         }>
                         <Text style={styles.chatText}>Start Chatting</Text>
                     </TouchableOpacity>
