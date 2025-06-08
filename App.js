@@ -1,13 +1,21 @@
 
 import Screen1 from './components/Start.js';
 import Screen2 from './components/Chat.js';
+
+import { useEffect } from 'react';
+import { Alert } from 'react-native';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, disableNetwork, enableNetwork } from "firebase/firestore";
+
+import { useNetInfo } from '@react-native-community/netinfo';
+
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyDWd-1AePMOtGStOnhMCYdWsnUm3l0Sfnw",
@@ -22,6 +30,19 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+const netInfo = useNetInfo();
+
+if (netInfo.isConnected === fasle) {
+  disableNetwork(db);
+  Alert.alert('Network Disconnected')
+ }
+
+else if (netInfo.isConnected) {
+  enableNetwork(db);
+  Alert.alert('Network Connected')
+  
+}
+
 const Stack = createNativeStackNavigator(
 );
 
@@ -34,7 +55,7 @@ const App = () => {
           initialRouteName="Start">
           <Stack.Screen name="Start" component={Screen1} />
           <Stack.Screen name="Chat">
-            {(props) => <Screen2 db={db} {...props} />}
+            {(props) => <Screen2 db={db} isConnected={netInfo.isConnected} {...props} />}
           </Stack.Screen>
         </Stack.Navigator>
       </GestureHandlerRootView>
