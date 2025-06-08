@@ -30,23 +30,24 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const netInfo = useNetInfo();
 
-if (netInfo.isConnected === fasle) {
-  disableNetwork(db);
-  Alert.alert('Network Disconnected')
- }
-
-else if (netInfo.isConnected) {
-  enableNetwork(db);
-  Alert.alert('Network Connected')
-  
-}
 
 const Stack = createNativeStackNavigator(
 );
 
 const App = () => {
+  const netInfo = useNetInfo();
+
+  if (netInfo.isConnected === false) {
+    disableNetwork(db);
+    Alert.alert('Network Disconnected')
+  }
+
+  else if (netInfo.isConnected) {
+    enableNetwork(db);
+    Alert.alert('Network Connected')
+
+  }
   return (
 
     <NavigationContainer style={styles.container}>
