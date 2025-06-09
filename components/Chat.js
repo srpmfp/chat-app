@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text } from 'react-native';
 import { useEffect, useState } from 'react';
-import { GiftedChat, ImportToolBar, InputToolbar } from 'react-native-gifted-chat';
+import { GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { onSnapshot, orderBy, collection, addDoc, query, where } from 'firebase/firestore';
 
@@ -37,10 +37,10 @@ const Screen2 = ({ navigation, route, db, isConnected }) => {
     }
     const keyboardInput = (props) => {
         if (isConnected) {
-            return
-            <InputToolbar {...props} />;
+            return <InputToolbar {...props} />;
+        } else {
+            return null;
         }
-        else return null
     }
 
     // create a reference to the messages collection
@@ -83,12 +83,13 @@ const Screen2 = ({ navigation, route, db, isConnected }) => {
             <GiftedChat
                 messages={messages}
                 onSend={messages => onSend(messages)}
+                renderInputToolBar={keyboardInput()}
                 createdAt={new Date()}
                 user={{
                     name: name,
                     _id: userID
                 }}
-            />{keyboardInput()}
+            />
             <KeyboardAvoidingView behavior={Platform.OS === 'android' ? 'height' : Platform.OS === 'ios' ? 'padding' : 'undefined'} />
 
         </View>
