@@ -93,7 +93,7 @@ const Screen2 = ({ navigation, route, db, isConnected }) => {
     }
 
     const renderCustomActions = (props) => {
-        return <CustomActions {...props} />
+        return <CustomActions {...props} />;
     }
     return (
         <View style={[styles.container, { backgroundColor: background }]}>
@@ -101,11 +101,10 @@ const Screen2 = ({ navigation, route, db, isConnected }) => {
 
             <GiftedChat
                 messages={messages}
-
                 onSend={messages => onSend(messages)}
                 renderBubble={renderBubble}
-                renderAction={renderCustomActions}
-                renderInputToolbar={(props) => keyboardInput(props)}
+                renderActions={renderCustomActions}
+                renderInputToolbar={keyboardInput}
                 createdAt={new Date()}
                 user={{
                     name: name,
