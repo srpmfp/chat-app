@@ -37,17 +37,18 @@ const Stack = createNativeStackNavigator(
 
 const App = () => {
   const netInfo = useNetInfo();
+  useEffect(() => {
+    if (netInfo.isConnected === false) {
+      disableNetwork(db);
+      Alert.alert('Network Disconnected')
+    }
 
-  if (netInfo.isConnected === false) {
-    disableNetwork(db);
-    Alert.alert('Network Disconnected')
-  }
+    else if (netInfo.isConnected) {
+      enableNetwork(db);
+      Alert.alert('Network Connected')
 
-  else if (netInfo.isConnected) {
-    enableNetwork(db);
-    Alert.alert('Network Connected')
-
-  }
+    }
+  }, [netInfo.isConnected]);
   return (
 
     <NavigationContainer style={styles.container}>
