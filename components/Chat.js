@@ -1,8 +1,9 @@
 import { StyleSheet, View, Text } from 'react-native';
 import { useEffect, useState } from 'react';
-import { GiftedChat, InputToolbar } from 'react-native-gifted-chat';
+import { GiftedChat, InputToolbar, Bubble } from 'react-native-gifted-chat';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { onSnapshot, orderBy, collection, addDoc, query, where } from 'firebase/firestore';
+import CustomActions from './CustomActions';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -37,7 +38,7 @@ const Screen2 = ({ navigation, route, db, isConnected }) => {
     }
     const keyboardInput = (props) => {
         if (isConnected) {
-            return <InputToolbar {...props} />;
+            return <InputToolbar {...props} />
         } else {
             return null;
         }
@@ -75,7 +76,25 @@ const Screen2 = ({ navigation, route, db, isConnected }) => {
         //clean up function to unsubscribe from the snapshot listener
         return () => { if (unsubMessages) unsubMessages(); }
 
-    }, []);
+    }, [isConnected]);
+
+    const renderBubble = (props) => {
+        return <Bubble
+            {...props}
+            wrapperStyle={{
+                right: {
+                    backgroundColor: "#000"
+                },
+                left: {
+                    backgroundColor: "#ADD8E6"
+                }
+            }}
+        />
+    }
+
+    const renderCustomActions = (props) => {
+        return <CustomActions {...props} />;
+    }
     return (
         <View style={[styles.container, { backgroundColor: background }]}>
             <Text>Welcome {name}!</Text>
@@ -83,7 +102,9 @@ const Screen2 = ({ navigation, route, db, isConnected }) => {
             <GiftedChat
                 messages={messages}
                 onSend={messages => onSend(messages)}
-                renderInputToolBar={keyboardInput()}
+                renderBubble={renderBubble}
+                renderActions={renderCustomActions}
+                renderInputToolbar={keyboardInput}
                 createdAt={new Date()}
                 user={{
                     name: name,
