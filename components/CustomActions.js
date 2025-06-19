@@ -9,6 +9,7 @@ import * as Location from 'expo-location';
 const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, userID, storage }) => {
 
     const actionSheet = useActionSheet();
+
     const onActionPress = () => {
         const options = ['Choose From Library', 'Take Picture', 'Send Location', 'Cancel'];
         const cancelButtonIndex = options.length - 1;
@@ -32,7 +33,7 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, userID, storage })
             },
         );
     }
-    // Function to pick an image from the library in Action Sheet
+    // Function to generate a unique reference string for the image
     const generateReference = (uri) => {
         const timeStamp = (new Date()).getTime();
         const ImageName = uri.split("/")[uri.split("/").length - 1];
@@ -44,9 +45,17 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, userID, storage })
         const newUploadRef = ref(storage, uniqueRefString);
         const response = await fetch(imageURI);
         const blob = await response.blob();
+
+        // Upload the image to Firebase Storage with the unique reference string
         uploadBytes(newUploadRef, blob).then(async (snapshot) => {
             const imageURL = await getDownloadURL(snapshot.ref)
-            onSend({ image: imageURL })
+            onSend([{
+                _id: Math.random().toString(36).substring(7), // Generate a random ID for the message
+                createdAt: new Date(),
+                user: {
+                    _id: userID
+                }, image: imageURL
+            }])
         });
     }
 
@@ -87,19 +96,26 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, userID, storage })
 
     // Function to get the current location in Action Sheet
     const getLocation = async () => {
+
         try {
             let permissions = await Location.requestForegroundPermissionsAsync();
             if (permissions?.granted) {
                 const location = await Location.getCurrentPositionAsync({});
                 // If location is found, send it to the chat
                 if (location) {
-                    onSend({
-
+                    onSend([{
+                        _id: Math.random().toString(36).substring(7), // Generate a random ID for the message
+                        createdAt: new Date(),
+                        user: {
+                            _id: userID
+                        },
                         location: {
                             longitude: location.coords.longitude,
                             latitude: location.coords.latitude
-                        },
-                    })
+                        }
+
+                    }])
+
 
                 } else {
                     Alert.alert('Location not found');
