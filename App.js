@@ -1,6 +1,6 @@
 
 import Screen1 from './components/Start.js';
-import Screen2 from './components/Chat.js';
+import Chat from './components/Chat.js';
 
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
@@ -12,7 +12,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { initializeApp } from "firebase/app";
 import { getFirestore, disableNetwork, enableNetwork } from "firebase/firestore";
-
+import { getStorage } from "firebase/storage";
 import { useNetInfo } from '@react-native-community/netinfo';
 
 
@@ -30,7 +30,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-
+const storage = getStorage(app);
 
 const Stack = createNativeStackNavigator(
 );
@@ -57,7 +57,7 @@ const App = () => {
           initialRouteName="Start">
           <Stack.Screen name="Start" component={Screen1} />
           <Stack.Screen name="Chat">
-            {(props) => <Screen2 db={db} isConnected={netInfo.isConnected} {...props} />}
+            {(props) => <Chat db={db} storage={storage} isConnected={netInfo.isConnected} {...props} />}
           </Stack.Screen>
         </Stack.Navigator>
       </GestureHandlerRootView>
