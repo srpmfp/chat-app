@@ -120,7 +120,6 @@ const Chat = ({ navigation, route, db, isConnected, storage }) => {
 
 
     const renderBubble = (props) => {
-        const { currentMessage } = props;
         // Customizing the bubble style based on the message sender
 
         return <Bubble

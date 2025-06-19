@@ -24,7 +24,11 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.dizzypete.chat"
+      "package": "com.dizzypete.chat",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBz7xm3lSw_s78yBpKQylMBvG9HdSemgG4"
+        }
     },
     "web": {
       "favicon": "./assets/favicon.png"
