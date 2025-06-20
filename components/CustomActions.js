@@ -6,7 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 
 
-const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, userID, storage }) => {
+const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, userID, name, storage }) => {
 
     const actionSheet = useActionSheet();
 
@@ -53,7 +53,8 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, userID, storage })
                 _id: Math.random().toString(36).substring(7), // Generate a random ID for the message
                 createdAt: new Date(),
                 user: {
-                    _id: userID
+                    _id: userID,
+                    name: name
                 }, image: imageURL
             }])
         });
@@ -110,8 +111,9 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, userID, storage })
                             _id: userID
                         },
                         location: {
-                            longitude: location.coords.longitude,
-                            latitude: location.coords.latitude
+                            latitude: location.coords.latitude,
+                            longitude: location.coords.longitude
+
                         }
 
                     }])

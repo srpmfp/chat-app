@@ -1,11 +1,11 @@
+
 import { StyleSheet, View, Text } from 'react-native';
-import { useEffect, useState, useCallback } from 'react';
-import { GiftedChat, InputToolbar, Bubble, onSend } from 'react-native-gifted-chat';
+import { useEffect, useState } from 'react';
+import { GiftedChat, InputToolbar, Bubble } from 'react-native-gifted-chat';
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import { onSnapshot, orderBy, collection, addDoc, query } from 'firebase/firestore';
 import MapView from 'react-native-maps';
 import CustomActions from './CustomActions';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -40,7 +40,8 @@ const Chat = ({ navigation, route, db, isConnected, storage }) => {
                             _id: doc.id,
                             ...data,
                             createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(),
-                            user: { _id: doc.data().user._id, name: doc.data().user.name }
+                            user: { _id: doc.data().user._id, name: doc.data().user.name },
+
                         });
 
                     })
@@ -138,7 +139,7 @@ const Chat = ({ navigation, route, db, isConnected, storage }) => {
 
     // Customizing the actions button to include taking photos, picking images, and getting location
     const renderCustomActions = (props) => {
-        return <CustomActions storage={storage} userID={userID} onSend={onSend} {...props} />;
+        return <CustomActions storage={storage} name={name} userID={userID} onSend={onSend} {...props} />;
     }
 
 
@@ -149,10 +150,12 @@ const Chat = ({ navigation, route, db, isConnected, storage }) => {
         const { currentMessage } = props;
         // If the message has a location, render a MapView
         try {
+
+
             if (currentMessage.location) {
                 return (
                     <MapView
-                        style={{ width: 150, height: 100, borderRadius: 13 }}
+                        style={{ width: 200, height: 150, borderRadius: 13 }}
                         region={{
                             latitude: currentMessage.location.latitude,
                             longitude: currentMessage.location.longitude,
