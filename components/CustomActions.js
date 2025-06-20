@@ -132,9 +132,9 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, userID, name, stor
     }
 
     return (
-        <TouchableOpacity styles={styles.container} onPress={onActionPress}>
+        <TouchableOpacity styles={styles.container} onPress={onActionPress} accessibility={true} accessibilityLabel="More options" accessibilityHint="Choose to send an image or location">
             <View style={[styles.wrapper, wrapperStyle]}>
-                <Text style={[styles.iconText, iconTextStyle]}>+</Text>
+                <Text accessibility={true} accessibilityLabel="More options" accessibilityHint="Choose to send an image or location" style={[styles.iconText, iconTextStyle]}>+</Text>
             </View>
         </TouchableOpacity>
     )
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
         borderRadius: 13,
         borderColor: '#b2b2b2',
         borderWidth: 2,
-        flex: 1,
+        flex: 2,
     },
     iconText: {
         color: '#b2b2b2',

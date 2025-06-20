@@ -72,7 +72,7 @@ const Screen1 = ({ navigation }) => {
             <View style={styles.box}>
 
 
-                <Text style={styles.title}>App Title</Text>
+                <Text style={styles.title}>Chatr</Text>
                 {/* Input Box Container  */}
                 <View style={styles.inputBox}>
                     <View style={styles.txtInputBox}>
