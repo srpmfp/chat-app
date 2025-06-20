@@ -1,27 +1,83 @@
+
 import { StyleSheet, View, Text } from 'react-native';
 import { useEffect, useState } from 'react';
 import { GiftedChat, InputToolbar, Bubble } from 'react-native-gifted-chat';
 import { KeyboardAvoidingView, Platform } from 'react-native';
-import { onSnapshot, orderBy, collection, addDoc, query, where } from 'firebase/firestore';
+import { onSnapshot, orderBy, collection, addDoc, query } from 'firebase/firestore';
+import MapView from 'react-native-maps';
 import CustomActions from './CustomActions';
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-const Screen2 = ({ navigation, route, db, isConnected }) => {
+const Chat = ({ navigation, route, db, isConnected, storage }) => {
     const { background, name, userID } = route.params;
     const [messages, setMessages] = useState([]);
 
 
+    useEffect(() => {
+
+        let unsubMessages;
+
+        // if connected to the internet, load messages from firestore
+        if (isConnected === true) {
+            if (unsubMessages) unsubMessages();
+            unsubMessages = null;
+
+            navigation.setOptions({
+                title: name,
+                backgroundColor: background,
+            })
+            const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
+
+            try {
+                unsubMessages = onSnapshot(q, (docQuery) => {
+
+                    // add new messages
+                    let newMessages = [];
+                    docQuery.forEach(doc => {
+                        const data = doc.data();
+                        newMessages.push({
+                            _id: doc.id,
+                            ...data,
+                            createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(),
+                            user: { _id: doc.data().user._id, name: doc.data().user.name },
+
+                        });
+
+                    })
+
+                    // store the new messages in async storage
+                    cachedMessages(newMessages)
+                    // set the messages to the state
+                    setMessages(newMessages);
+                })
+            }
+            catch (error) {
+                console.log(error.message);
+            }
+        } else { loadCachedMessages() } // if not connected, load messages from async storage
+
+
+        //clean up function to unsubscribe from the snapshot listener
+
+        return () => { if (unsubMessages) unsubMessages(); }
+
+    }, [isConnected]);
+
+
     // Add message to db with uid and date
+
     const onSend = (newMessages) => {
-        addDoc(collection(db, 'messages'), newMessages[0], {
-            ...newMessages[0],
-            uid: userID,
-            createdAt: new Date()
-        });
+        try {
+            addDoc(collection(db, 'messages'), newMessages[0])
+        }
+        catch (error) {
+            console.log(error.message);
+        }
 
     }
+
+
     // async render of messages
     const loadCachedMessages = async () => {
         const cachedMessages = await AsyncStorage.getItem('messages');
@@ -33,11 +89,20 @@ const Screen2 = ({ navigation, route, db, isConnected }) => {
     // input message into async storage
     const cachedMessages = async (newMessages) => {
 
-        await AsyncStorage.setItem('messages', JSON.stringify(newMessages) || []);
-        setMessages(newMessages);
+        try {
+
+            await AsyncStorage.setItem('messages', JSON.stringify(newMessages) || []);
+        }
+
+
+        catch (error) {
+            console.log(error.message)
+        }
     }
+
+    // render the input toolbar only if connected to the internet
     const keyboardInput = (props) => {
-        if (isConnected) {
+        if (isConnected === true) {
             return <InputToolbar {...props} />
         } else {
             return null;
@@ -45,42 +110,22 @@ const Screen2 = ({ navigation, route, db, isConnected }) => {
     }
 
     // create a reference to the messages collection
-    let unsubMessages;
-    useEffect(() => {
-        if (isConnected === true) {
-            if (unsubMessages) unsubMessages();
-            unsubMessages = null;
 
-            navigation.setOptions({
-                title: name,
-                backgroundColor: background,
-            })
-            const q = query(collection(db, 'messages'), orderBy('createdAt', 'desc'));
 
-            unsubMessages = onSnapshot(q, (docQuery) => {
 
-                let newMessages = [];
-                docQuery.forEach(doc => {
-                    newMessages.push({
-                        id: doc.id,
-                        ...doc.data(),
-                        createdAt: new Date(doc.data().createdAt.toMillis()),
-                        user: { _id: doc.data().user._id, name: doc.data().user.name }
-                    });
+    // load messages from firestore when connected
+    //  and set the title and background color to the screen through route.param
+    // and set the messages to the state
+    // if not connected, load messages from async storage
 
-                })
-                cachedMessages(newMessages)
-                setMessages(newMessages);
-            })
-        } else { loadCachedMessages() }
-        //clean up function to unsubscribe from the snapshot listener
-        return () => { if (unsubMessages) unsubMessages(); }
 
-    }, [isConnected]);
 
     const renderBubble = (props) => {
+        // Customizing the bubble style based on the message sender
+
         return <Bubble
             {...props}
+
             wrapperStyle={{
                 right: {
                     backgroundColor: "#000"
@@ -92,8 +137,39 @@ const Screen2 = ({ navigation, route, db, isConnected }) => {
         />
     }
 
+    // Customizing the actions button to include taking photos, picking images, and getting location
     const renderCustomActions = (props) => {
-        return <CustomActions {...props} />;
+        return <CustomActions storage={storage} name={name} userID={userID} onSend={onSend} {...props} />;
+    }
+
+
+
+    // Customizing the view for messages depending on the message type
+    const renderCustomView = (props) => {
+
+        const { currentMessage } = props;
+        // If the message has a location, render a MapView
+        try {
+
+
+            if (currentMessage.location) {
+                return (
+                    <MapView
+                        style={{ width: 200, height: 150, borderRadius: 13 }}
+                        region={{
+                            latitude: currentMessage.location.latitude,
+                            longitude: currentMessage.location.longitude,
+                            latitudeDelta: 0.0922,
+                            longitudeDelta: 0.0421
+                        }}
+                    />
+                );
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+        return null;
+
     }
     return (
         <View style={[styles.container, { backgroundColor: background }]}>
@@ -105,6 +181,7 @@ const Screen2 = ({ navigation, route, db, isConnected }) => {
                 renderBubble={renderBubble}
                 renderActions={renderCustomActions}
                 renderInputToolbar={keyboardInput}
+                renderCustomView={renderCustomView}
                 createdAt={new Date()}
                 user={{
                     name: name,
@@ -123,4 +200,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Screen2;
+export default Chat;

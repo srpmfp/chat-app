@@ -17,6 +17,7 @@ const Screen1 = ({ navigation }) => {
 
 
     const auth = getAuth();
+    
     const signInUser = () => {
         signInAnonymously(auth)
             .then(() => {
