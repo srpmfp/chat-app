@@ -107,12 +107,18 @@ If you have the App installed on your device or your emulator, this should begin
 
 ---
 
-Future Changes and additions
+### Future Changes and additions
 
 - long press for adding reactions to chat
 - marker for map
 - creating cross platform functionality by bringing in leaflet function for web emulation.
 - If in `<InputBox>` allowing users to use enter to send messages
+
+### Project Takeaways 
+
+Of the projects, this one really got me familiar with the CLI, debugging, and versioning necessary to get Native React applications function. It was by far the most challenging of the projects I completed in my course. 
+It was the most frustrating, but I had a lot of victorious moments when I got versions and emulatorsto be coopoerative displaying the information. So in contrast, it was one of the more rewarding projects I have completed.
+
 
 
 
