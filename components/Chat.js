@@ -139,7 +139,11 @@ const Chat = ({ navigation, route, db, isConnected, storage }) => {
 
     // Customizing the actions button to include taking photos, picking images, and getting location
     const renderCustomActions = (props) => {
-        return <CustomActions storage={storage} name={name} userID={userID} onSend={onSend} {...props} />;
+        return <CustomActions 
+        storage={storage} 
+        name={name} 
+        userID={userID} 
+        onSend={onSend} {...props} />;
     }
 
 

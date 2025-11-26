@@ -101,8 +101,14 @@ const CustomActions = ({ wrapperStyle, iconTextStyle, onSend, userID, name, stor
         try {
             let permissions = await Location.requestForegroundPermissionsAsync();
             if (permissions?.granted) {
-                const location = await Location.getCurrentPositionAsync({});
-                // If location is found, send it to the chat
+
+                const location = await Location.getCurrentPositionAsync({
+                    accuracy: Location.Accuracy.High,
+                    timeout: 20000,
+                    maximumAge: 1000,
+                });
+
+
                 if (location) {
                     onSend([{
                         _id: Math.random().toString(36).substring(7), // Generate a random ID for the message
